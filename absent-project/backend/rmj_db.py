@@ -228,32 +228,6 @@ def get_jemaat_by_id(id):
         }
         list_jemaat.append(data)
     return list_jemaat
-
-# Cari absen dengan huruf awal
-def get_absen_by_name(name):
-    list_absen = []
-    jmt = db.session.query(Absen.id_absen, Absen.waktu_absen).join(Jemaat, Jemaat.id_jemaat == Absen.id_jemaat).filter(Jemaat.nama.startswith(name)).all()
-    for id_jemaat, nama, no_telp, email, gender, hobi, sekolah, temp_lahir, tgl_lahir, no_telp_ortu, kelas, daerah, kecamatan, alamat, foto, status in jmt:
-        data = {
-            'id_jemaat' : id_jemaat, 
-            'nama' : nama, 
-            'no_telp' : no_telp, 
-            'email' : email, 
-            'gender' : gender, 
-            'hobi' : hobi, 
-            'sekolah' : sekolah, 
-            'temp_lahir' : temp_lahir, 
-            'tgl_lahir' : tgl_lahir, 
-            'no_telp_ortu' : no_telp_ortu, 
-            'kelas' : kelas, 
-            'daerah' : daerah, 
-            'kecamatan' : kecamatan, 
-            'alamat' : alamat, 
-            'foto' : foto,
-            'status' : status
-        }
-        list_absen.append(data)
-    return list_absen
     
 # Cari jemaat dengan huruf awal
 def get_jemaat_by_name(name):
@@ -336,6 +310,19 @@ def get_absen_by_date(start_date, end_date):
         }
         list_absen.append(data)
     return list_absen
+
+# Cari absen dengan huruf awal
+def get_absen_by_name(name):
+    list_absen = []
+    abs = db.session.query(Absen.id_jemaat, Jemaat.nama, Jemaat.status, Absen.waktu_absen).join(Jemaat, Jemaat.id_jemaat == Absen.id_jemaat).filter(Jemaat.nama.startswith(name)).all()
+    for id_jemaat, nama, status, waktu_absen in abs:
+        data = {
+            "id_jemaat" : id_jemaat,
+            "nama":nama,
+            "status" : status,
+            "waktu_absen" : waktu_absen
+        }
+        list_absen.append(data)
 
 # Cari Absen Dengan ID Jemaat
 def get_absen_by_id(id_jmt):
