@@ -7,7 +7,7 @@ views = Blueprint('views', __name__)
 def halo():
     return '<h1>halo</h1>'
 
-@views.route('/all-absent')
+@views.route('/all-absent',methods=['POST','GET'])
 def all_absen():
     return jsonify(get_all_absen())
 

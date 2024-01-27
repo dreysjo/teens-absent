@@ -22,7 +22,6 @@ from werkzeug.security import check_password_hash
 # app.config['SQLALCHEMY_TRACK_MODIFICATIONS']=False
 # db = SQLAlchemy(app)
 
-
 # class Jemaat(db.Model):
 #     id_jemaat = db.Column('id_jemaat',db.Integer,primary_key=True)
 #     nama = db.Column('nama_jemaat',db.String(100))
@@ -193,7 +192,7 @@ def get_all_jemaat():
             'temp_lahir' : temp_lahir, 
             'tgl_lahir' : tgl_lahir, 
             'no_telp_ortu' : no_telp_ortu, 
-            'kelas' : kelas, 
+            'kelas' : kelas,
             'daerah' : daerah, 
             'kecamatan' : kecamatan, 
             'alamat' : alamat, 
@@ -293,7 +292,7 @@ def get_absen_by_status(status):
             'no_telp' : no_telp, 
             'email' : email, 
             'gender' : gender, 
-            'hobi' : hobi, 
+            'hobi' : hobi,
             'sekolah' : sekolah, 
             'temp_lahir' : temp_lahir, 
             'tgl_lahir' : tgl_lahir, 
@@ -311,37 +310,43 @@ def get_absen_by_status(status):
 # Ambil Semua Absen
 def get_all_absen():
     # with app.app_context():
-    abs = db.session.query(Absen.id_jemaat, Absen.waktu_absen).all()
+    abs = db.session.query(Absen.id_jemaat, Jemaat.nama, Jemaat.status, Absen.waktu_absen).join(Absen,Absen.id_jemaat == Jemaat.id_jemaat).all()
     list_absen = []
-    for id_jemaat, waktu_absen in abs:
+    for id_jemaat, nama, status, waktu_absen in abs:
         data = {
             "id_jemaat" : id_jemaat,
+            "nama":nama,
+            "status" : status,
             "waktu_absen" : waktu_absen
         }
         list_absen.append(data)
     return list_absen
         
 # Cari Absen Dengan Tanggal
-def get_absen_by_date(date):
+def get_absen_by_date(start_date, end_date):
     # with app.app_context():
-    abs = db.session.query(Absen.id_jemaat, Absen.waktu_absen).filter(Absen.waktu_absen == date).all()
+    abs = db.session.query(Absen.id_jemaat, Jemaat.nama, Jemaat.status, Absen.waktu_absen).join(Absen,Absen.id_jemaat == Jemaat.id_jemaat).filter(Absen.waktu_absen.between(start_date,end_date)).all()
     list_absen = []
-    for id_jemaat, waktu_absen in abs:
+    for id_jemaat, nama, status, waktu_absen in abs:
         data = {
             "id_jemaat" : id_jemaat,
+            "nama":nama,
+            "status" : status,
             "waktu_absen" : waktu_absen
         }
         list_absen.append(data)
     return list_absen
-    
+
 # Cari Absen Dengan ID Jemaat
 def get_absen_by_id(id_jmt):
     # with app.app_context():
-    abs = db.session.query(Absen.id_jemaat, Absen.waktu_absen).filter(Absen.id_jemaat == id_jmt).all()
+    abs = db.session.query(Absen.id_jemaat, Jemaat.nama, Jemaat.status, Absen.waktu_absen).join(Absen,Absen.id_jemaat == Jemaat.id_jemaat).filter(Absen.id_jemaat == id_jmt).all()
     list_absen = []
-    for id_jemaat, waktu_absen in abs:
+    for id_jemaat, nama, status, waktu_absen in abs:
         data = {
             "id_jemaat" : id_jemaat,
+            "nama":nama,
+            "status" : status,
             "waktu_absen" : waktu_absen
         }
         list_absen.append(data)
