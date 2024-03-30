@@ -131,22 +131,6 @@ def add_absen(id_jemaat, waktu_absen):
         return True
 
 
-# def get_all_invoice():
-#     with app.app_context():
-#         inv = db.session.query(Invoice.id_invoice,Admin.nama,Invoice.tanggal,Invoice.total,Invoice.total_diskon, Invoice.grand_total).join(Admin,Admin.id_admin == Invoice.id_admin).all()
-#         list_invoice = []
-#         for id_invoice,nama,tanggal,total,total_diskon,grand_total in inv:
-#             data = {
-#                 'id' : id_invoice,
-#                 'nama' : nama,
-#                 'tanggal' : tanggal,
-#                 'total' : total,
-#                 'total_diskon' : total_diskon,
-#                 'grand_total' : grand_total
-#             }
-#             list_invoice.append(data)
-#         return list_invoice
-
 # Login Admin
 def login_admin(input_nama_admin, input_password):
     with app.app_context():
@@ -224,19 +208,20 @@ def get_jemaat_by_id(id):
             list_jemaat.append(data)
         return list_jemaat
     
-# Ambil Semua Absen
 def get_all_absen():
-    with app.app_context():
-        abs = db.session.query(Absen.id_jemaat, Absen.waktu_absen).all()
-        list_absen = []
-        for id_jemaat, waktu_absen in abs:
-            data = {
-                "id_jemaat" : id_jemaat,
-                "waktu_absen" : waktu_absen
-            }
-            list_absen.append(data)
-        return list_absen
-        
+    # with app.app_context():
+    abs = db.session.query(Absen.id_jemaat, Jemaat.nama, Jemaat.status, Absen.waktu_absen).join(Absen,Absen.id_jemaat == Jemaat.id_jemaat).all()
+    list_absen = []
+    for id_jemaat,nama, status, waktu_absen in abs:
+        data = {
+            "id_jemaat" : id_jemaat,
+            "nama":nama,
+            "status" : status,
+            "waktu_absen" : waktu_absen
+        }
+        list_absen.append(data)
+    return list_absen
+
 # Cari Absen Dengan Tanggal
 def get_absen_by_tanggal(tgl):
     with app.app_context():
@@ -320,6 +305,125 @@ def migrate_data(file_name):
             return {
                 'status':'failed'
             }
+
+# Cari jemaat dengan status
+def get_absen_by_status(status):
+    list_jemaat = []
+    jmt = db.session.query(Jemaat.id_jemaat, Jemaat.nama, Jemaat.no_telp, Jemaat.email, Jemaat.gender, Jemaat.hobi, Jemaat.sekolah, Jemaat.temp_lahir, Jemaat.tgl_lahir, Jemaat.no_telp_ortu, Jemaat.kelas, Jemaat.daerah, Jemaat.kecamatan, Jemaat.alamat, Jemaat.foto, Jemaat.status).filter(Jemaat.status == status)
+    for id_jemaat, nama, no_telp, email, gender, hobi, sekolah, temp_lahir, tgl_lahir, no_telp_ortu, kelas, daerah, kecamatan, alamat, foto, status in jmt:
+        data = {
+            'id_jemaat' : id_jemaat, 
+            'nama' : nama, 
+            'no_telp' : no_telp, 
+            'email' : email, 
+            'gender' : gender, 
+            'hobi' : hobi, 
+            'sekolah' : sekolah, 
+            'temp_lahir' : temp_lahir, 
+            'tgl_lahir' : tgl_lahir, 
+            'no_telp_ortu' : no_telp_ortu, 
+            'kelas' : kelas, 
+            'daerah' : daerah, 
+            'kecamatan' : kecamatan, 
+            'alamat' : alamat, 
+            'foto' : foto,
+            'status' : status
+        }
+        list_jemaat.append(data)
+    return list_jemaat
+
+def get_all_absen(status=None, nama=None, tanggal=None):
+    query = db.session.query(Absen.id_jemaat, Jemaat.nama, Jemaat.status, Absen.waktu_absen).join(Absen, Absen.id_jemaat == Jemaat.id_jemaat)
+
+    if status:
+        # query = query.filter(Jemaat.status == status)
+        if status.lower() == 'inactive':
+            # Memfilter status yang tidak aktif
+            query = query.filter(Jemaat.status == '-')
+        else:
+            query = query.filter(Jemaat.status == status)
+
+    if nama:
+        nama = nama.upper()
+        query = query.filter(Jemaat.nama.ilike(f'%{nama}%'))
+
+    if tanggal:
+        tanggal_obj = datetime.strptime(tanggal, '%Y-%m-%d').date()
+        # Mendapatkan tanggal, bulan, dan tahun dari objek datetime
+        tahun = tanggal_obj.year
+        bulan = tanggal_obj.month
+        hari = tanggal_obj.day
+        # Memfilter berdasarkan tanggal, bulan, dan tahun
+        query = query.filter(db.extract('year', Absen.waktu_absen) == tahun,
+                             db.extract('month', Absen.waktu_absen) == bulan,
+                             db.extract('day', Absen.waktu_absen) == hari)
+
+    abs = query.all()
+
+    list_absen = []
+    for id_jemaat, nama, status, waktu_absen in abs:
+        data = {
+            "id_jemaat": id_jemaat,
+            "nama": nama,
+            "status": status,
+            "waktu_absen": waktu_absen
+        }
+        list_absen.append(data)
+
+    return list_absen
+        
+# Cari Absen Dengan Tanggal
+def get_absen_by_date(date):
+    # with app.app_context():
+    abs = db.session.query(Absen.id_jemaat, Absen.waktu_absen).filter(Absen.waktu_absen == date).all()
+    list_absen = []
+    for id_jemaat, waktu_absen in abs:
+        data = {
+            "id_jemaat" : id_jemaat,
+            "waktu_absen" : waktu_absen
+        }
+        list_absen.append(data)
+    return list_absen
+    
+# Cari Absen Dengan ID Jemaat
+def get_absen_by_id(id_jmt):
+    # with app.app_context():
+    abs = db.session.query(Absen.id_jemaat, Absen.waktu_absen).filter(Absen.id_jemaat == id_jmt).all()
+    list_absen = []
+    for id_jemaat, waktu_absen in abs:
+        data = {
+            "id_jemaat" : id_jemaat,
+            "waktu_absen" : waktu_absen
+        }
+        list_absen.append(data)
+    return list_absen
+    
+# Cari absen dengan huruf awal
+def get_absen_by_name(name):
+    list_absen = []
+    jmt = db.session.query(Absen.id_absen, Absen.waktu_absen).join(Jemaat, Jemaat.id_jemaat == Absen.id_jemaat).filter(Jemaat.nama.startswith(name)).all()
+    for id_jemaat, nama, no_telp, email, gender, hobi, sekolah, temp_lahir, tgl_lahir, no_telp_ortu, kelas, daerah, kecamatan, alamat, foto, status in jmt:
+        data = {
+            'id_jemaat' : id_jemaat, 
+            'nama' : nama, 
+            'no_telp' : no_telp, 
+            'email' : email, 
+            'gender' : gender, 
+            'hobi' : hobi, 
+            'sekolah' : sekolah, 
+            'temp_lahir' : temp_lahir, 
+            'tgl_lahir' : tgl_lahir, 
+            'no_telp_ortu' : no_telp_ortu, 
+            'kelas' : kelas, 
+            'daerah' : daerah, 
+            'kecamatan' : kecamatan, 
+            'alamat' : alamat, 
+            'foto' : foto,
+            'status' : status
+        }
+        list_absen.append(data)
+    return list_absen
+    
 
 # Test
 # print(get_all_jemaat())
