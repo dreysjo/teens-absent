@@ -1,79 +1,78 @@
 from flask import Flask
 from flask_sqlalchemy import SQLAlchemy
-from flask_cors import CORS 
+from flask_cors import CORS
+print("Before importing pandas")
 from datetime import datetime
 import pandas as pd
-from .models import Jemaat, Absen, Admin
-from . import db
 from werkzeug.security import check_password_hash
 # from .main import app
 
-# app = Flask(__name__)
-# CORS(app, resources={r"*": {"origins": "*"}})
-# app.secret_key = "rmj_db"
+app = Flask(__name__)
+CORS(app, resources={r"*": {"origins": "*"}})
+app.secret_key = "rmj_db"
 # # userpass = 'mysql://root:@'
 # # basedir  = '127.0.0.1'
 # # dbname   = '/rmj_db'
 # # socket   = '?unix_socket=/Applications/XAMPP/xamppfiles/var/mysql/mysql.sock'
 # # dbname   = dbname + socket
 # # app.config['SQLALCHEMY_DATABASE_URI'] = userpass + basedir + dbname
-# app.config['SQLALCHEMY_DATABASE_URI']='mysql://root@localhost:3307/rmj_db'
+app.config['SQLALCHEMY_DATABASE_URI']='mysql://root@localhost:3306/rmj_db'
 # # app.config['SQLALCHEMY_DATABASE_URI']= 'mysql://jmspa:127.0.0.1/rmj_db'
-# app.config['SQLALCHEMY_TRACK_MODIFICATIONS']=False
-# db = SQLAlchemy(app)
+app.config['SQLALCHEMY_TRACK_MODIFICATIONS']=False
+db = SQLAlchemy(app)
 
-# class Jemaat(db.Model):
-#     id_jemaat = db.Column('id_jemaat',db.Integer,primary_key=True)
-#     nama = db.Column('nama_jemaat',db.String(100))
-#     no_telp = db.Column('no_telp',db.String(100))
-#     email = db.Column('email',db.String(100))
-#     gender = db.Column('gender',db.String(1))
-#     hobi = db.Column('hobi',db.String(100))
-#     sekolah = db.Column('nama_sekolah',db.String(100))
-#     temp_lahir = db.Column('tempat_lahir',db.String(100))
-#     tgl_lahir = db.Column('tanggal_lahir',db.DateTime)
-#     no_telp_ortu = db.Column('no_telp_ortu',db.String(100))
-#     kelas = db.Column('kelas',db.Integer)
-#     daerah = db.Column('daerah',db.String(100))
-#     kecamatan = db.Column('kecamatan',db.String(100))
-#     alamat = db.Column('alamat_lengkap',db.String(100))
-#     foto = db.Column('foto_jemaat',db.String(100))
-#     status = db.Column('status',db.String(100))
-#     def __init__(self, nama, no_telp, email, gender, hobi, sekolah, temp_lahir, tgl_lahir, no_telp_ortu, kelas, daerah, kecamatan, alamat, foto, status):
-#         self.nama = nama
-#         self.no_telp = no_telp
-#         self.email = email
-#         self.gender = gender
-#         self.hobi = hobi
-#         self.sekolah = sekolah
-#         self.temp_lahir = temp_lahir
-#         self.tgl_lahir = tgl_lahir
-#         self.no_telp_ortu = no_telp_ortu
-#         self.kelas = kelas
-#         self.daerah = daerah
-#         self.kecamatan = kecamatan
-#         self.alamat = alamat
-#         self.foto = foto
-#         self.status = status
+class Jemaat(db.Model):
+    id_jemaat = db.Column('id_jemaat',db.Integer,primary_key=True)
+    nama = db.Column('nama_jemaat',db.String(100))
+    no_telp = db.Column('no_telp',db.String(100))
+    email = db.Column('email',db.String(100))
+    gender = db.Column('gender',db.String(1))
+    hobi = db.Column('hobi',db.String(100))
+    sekolah = db.Column('nama_sekolah',db.String(100))
+    temp_lahir = db.Column('tempat_lahir',db.String(100))
+    tgl_lahir = db.Column('tanggal_lahir',db.DateTime)
+    no_telp_ortu = db.Column('no_telp_ortu',db.String(100))
+    kelas = db.Column('kelas',db.Integer)
+    daerah = db.Column('daerah',db.String(100))
+    kecamatan = db.Column('kecamatan',db.String(100))
+    alamat = db.Column('alamat_lengkap',db.String(100))
+    foto = db.Column('foto_jemaat',db.String(100))
+    status = db.Column('status',db.String(100))
+    def __init__(self, nama, no_telp, email, gender, hobi, sekolah, temp_lahir, tgl_lahir, no_telp_ortu, kelas, daerah, kecamatan, alamat, foto, status):
+        self.nama = nama
+        self.no_telp = no_telp
+        self.email = email
+        self.gender = gender
+        self.hobi = hobi
+        self.sekolah = sekolah
+        self.temp_lahir = temp_lahir
+        self.tgl_lahir = tgl_lahir
+        self.no_telp_ortu = no_telp_ortu
+        self.kelas = kelas
+        self.daerah = daerah
+        self.kecamatan = kecamatan
+        self.alamat = alamat
+        self.foto = foto
+        self.status = status
 
-# class Absen(db.Model):
-#     id_absen = db.Column('id_absen', db.Integer, primary_key=True)
-#     id_jemaat = db.Column('id_jemaat', db.Integer)
-#     waktu_absen = db.Column('waktu_absen', db.DateTime, default=datetime.now()) #, server_default=db.func.now()
-#     def __init__(self,id_jemaat, waktu_absen):
-#         self.id_jemaat = id_jemaat
-#         self.waktu_absen = waktu_absen
+class Absen(db.Model):
+    id_absen = db.Column('id_absen', db.Integer, primary_key=True)
+    id_jemaat = db.Column('id_jemaat', db.Integer)
+    waktu_absen = db.Column('waktu_absen', db.DateTime, default=datetime.now()) #, server_default=db.func.now()
+    def __init__(self,id_jemaat, waktu_absen):
+        self.id_jemaat = id_jemaat
+        self.waktu_absen = waktu_absen
 
-# class Admin(db.Model):
-#     id_admin = db.Column('id_admin', db.Integer, primary_key=True)
-#     nama_admin = db.Column('nama_admin',db.String(100))
-#     password = db.Column('password',db.String(10))
-#     tanggal_terdaftar = db.Column('tanggal_terdaftar', db.DateTime, default=datetime.now())
-#     last_login = db.Column('last_login', db.DateTime, default=datetime.now())
-#     def __init__(self,nama_admin, password, last_login = datetime.now()):
-#         self.nama_admin = nama_admin
-#         self.password = password
-#         self.last_login = last_login
+class Admin(db.Model):
+    id_admin = db.Column('id_admin', db.Integer, primary_key=True)
+    nama_admin = db.Column('nama_admin',db.String(100))
+    password = db.Column('password',db.String(10))
+    tanggal_terdaftar = db.Column('tanggal_terdaftar', db.DateTime, default=datetime.now())
+    last_login = db.Column('last_login', db.DateTime, default=datetime.now())
+    def __init__(self,nama_admin, password, last_login = datetime.now()):
+        self.nama_admin = nama_admin
+        self.password = password
+        self.last_login = last_login
 
 
 #Dummy
@@ -132,22 +131,6 @@ def add_absen(id_jemaat, waktu_absen):
     # pengecekan row affected, kalo > 0 itu true (ada yang ke update) kalo ngga false
     return True
 
-
-# def get_all_invoice():
-#     with app.app_context():
-#         inv = db.session.query(Invoice.id_invoice,Admin.nama,Invoice.tanggal,Invoice.total,Invoice.total_diskon, Invoice.grand_total).join(Admin,Admin.id_admin == Invoice.id_admin).all()
-#         list_invoice = []
-#         for id_invoice,nama,tanggal,total,total_diskon,grand_total in inv:
-#             data = {
-#                 'id' : id_invoice,
-#                 'nama' : nama,
-#                 'tanggal' : tanggal,
-#                 'total' : total,
-#                 'total_diskon' : total_diskon,
-#                 'grand_total' : grand_total
-#             }
-#             list_invoice.append(data)
-#         return list_invoice
 
 # Login Admin
 def login_admin(input_nama_admin, input_password):
@@ -282,6 +265,31 @@ def get_absen_by_status(status):
     return list_jemaat
 
 # Ambil Semua Absen
+    with app.app_context():
+        jmt = db.session.query(Jemaat.id_jemaat, Jemaat.nama, Jemaat.no_telp, Jemaat.email, Jemaat.gender, Jemaat.hobi, Jemaat.sekolah, Jemaat.temp_lahir, Jemaat.tgl_lahir, Jemaat.no_telp_ortu, Jemaat.kelas, Jemaat.daerah, Jemaat.kecamatan, Jemaat.alamat, Jemaat.foto, Jemaat.status).filter(Jemaat.id_jemaat == id)
+        list_jemaat = []
+        for id_jemaat, nama, no_telp, email, gender, hobi, sekolah, temp_lahir, tgl_lahir, no_telp_ortu, kelas, daerah, kecamatan, alamat, foto, status in jmt:
+            data = {
+                'id_jemaat' : id_jemaat, 
+                'nama' : nama, 
+                'no_telp' : no_telp, 
+                'email' : email, 
+                'gender' : gender, 
+                'hobi' : hobi, 
+                'sekolah' : sekolah, 
+                'temp_lahir' : temp_lahir, 
+                'tgl_lahir' : tgl_lahir, 
+                'no_telp_ortu' : no_telp_ortu, 
+                'kelas' : kelas, 
+                'daerah' : daerah, 
+                'kecamatan' : kecamatan, 
+                'alamat' : alamat, 
+                'foto' : foto,
+                'status' : status
+            }
+            list_jemaat.append(data)
+        return list_jemaat
+    
 def get_all_absen():
     # with app.app_context():
     abs = db.session.query(Absen.id_jemaat, Jemaat.nama, Jemaat.status, Absen.waktu_absen).join(Absen,Absen.id_jemaat == Jemaat.id_jemaat).all()
@@ -296,6 +304,19 @@ def get_all_absen():
         list_absen.append(data)
     return list_absen
         
+    # with app.app_context():
+    abs = db.session.query(Absen.id_jemaat, Jemaat.nama, Jemaat.status, Absen.waktu_absen).join(Absen,Absen.id_jemaat == Jemaat.id_jemaat).all()
+    list_absen = []
+    for id_jemaat,nama, status, waktu_absen in abs:
+        data = {
+            "id_jemaat" : id_jemaat,
+            "nama":nama,
+            "status" : status,
+            "waktu_absen" : waktu_absen
+        }
+        list_absen.append(data)
+    return list_absen
+
 # Cari Absen Dengan Tanggal
 def get_absen_by_date(start_date, end_date):
     # with app.app_context():
@@ -397,6 +418,125 @@ def migrate_data(file_name):
             'status':'failed'
         }
 
+
+# Cari jemaat dengan status
+def get_absen_by_status(status):
+    list_jemaat = []
+    jmt = db.session.query(Jemaat.id_jemaat, Jemaat.nama, Jemaat.no_telp, Jemaat.email, Jemaat.gender, Jemaat.hobi, Jemaat.sekolah, Jemaat.temp_lahir, Jemaat.tgl_lahir, Jemaat.no_telp_ortu, Jemaat.kelas, Jemaat.daerah, Jemaat.kecamatan, Jemaat.alamat, Jemaat.foto, Jemaat.status).filter(Jemaat.status == status)
+    for id_jemaat, nama, no_telp, email, gender, hobi, sekolah, temp_lahir, tgl_lahir, no_telp_ortu, kelas, daerah, kecamatan, alamat, foto, status in jmt:
+        data = {
+            'id_jemaat' : id_jemaat, 
+            'nama' : nama, 
+            'no_telp' : no_telp, 
+            'email' : email, 
+            'gender' : gender, 
+            'hobi' : hobi, 
+            'sekolah' : sekolah, 
+            'temp_lahir' : temp_lahir, 
+            'tgl_lahir' : tgl_lahir, 
+            'no_telp_ortu' : no_telp_ortu, 
+            'kelas' : kelas, 
+            'daerah' : daerah, 
+            'kecamatan' : kecamatan, 
+            'alamat' : alamat, 
+            'foto' : foto,
+            'status' : status
+        }
+        list_jemaat.append(data)
+    return list_jemaat
+
+def get_all_absen(status=None, nama=None, tanggal=None):
+    query = db.session.query(Absen.id_jemaat, Jemaat.nama, Jemaat.status, Absen.waktu_absen).join(Absen, Absen.id_jemaat == Jemaat.id_jemaat)
+
+    if status:
+        # query = query.filter(Jemaat.status == status)
+        if status.lower() == 'inactive':
+            # Memfilter status yang tidak aktif
+            query = query.filter(Jemaat.status == '-')
+        else:
+            query = query.filter(Jemaat.status == status)
+
+    if nama:
+        nama = nama.upper()
+        query = query.filter(Jemaat.nama.ilike(f'%{nama}%'))
+
+    if tanggal:
+        tanggal_obj = datetime.strptime(tanggal, '%Y-%m-%d').date()
+        # Mendapatkan tanggal, bulan, dan tahun dari objek datetime
+        tahun = tanggal_obj.year
+        bulan = tanggal_obj.month
+        hari = tanggal_obj.day
+        # Memfilter berdasarkan tanggal, bulan, dan tahun
+        query = query.filter(db.extract('year', Absen.waktu_absen) == tahun,
+                             db.extract('month', Absen.waktu_absen) == bulan,
+                             db.extract('day', Absen.waktu_absen) == hari)
+
+    abs = query.all()
+
+    list_absen = []
+    for id_jemaat, nama, status, waktu_absen in abs:
+        data = {
+            "id_jemaat": id_jemaat,
+            "nama": nama,
+            "status": status,
+            "waktu_absen": waktu_absen
+        }
+        list_absen.append(data)
+
+    return list_absen
+        
+# Cari Absen Dengan Tanggal
+def get_absen_by_date(date):
+    # with app.app_context():
+    abs = db.session.query(Absen.id_jemaat, Absen.waktu_absen).filter(Absen.waktu_absen == date).all()
+    list_absen = []
+    for id_jemaat, waktu_absen in abs:
+        data = {
+            "id_jemaat" : id_jemaat,
+            "waktu_absen" : waktu_absen
+        }
+        list_absen.append(data)
+    return list_absen
+    
+# Cari Absen Dengan ID Jemaat
+def get_absen_by_id(id_jmt):
+    # with app.app_context():
+    abs = db.session.query(Absen.id_jemaat, Absen.waktu_absen).filter(Absen.id_jemaat == id_jmt).all()
+    list_absen = []
+    for id_jemaat, waktu_absen in abs:
+        data = {
+            "id_jemaat" : id_jemaat,
+            "waktu_absen" : waktu_absen
+        }
+        list_absen.append(data)
+    return list_absen
+    
+# Cari absen dengan huruf awal
+def get_absen_by_name(name):
+    list_absen = []
+    jmt = db.session.query(Absen.id_absen, Absen.waktu_absen).join(Jemaat, Jemaat.id_jemaat == Absen.id_jemaat).filter(Jemaat.nama.startswith(name)).all()
+    for id_jemaat, nama, no_telp, email, gender, hobi, sekolah, temp_lahir, tgl_lahir, no_telp_ortu, kelas, daerah, kecamatan, alamat, foto, status in jmt:
+        data = {
+            'id_jemaat' : id_jemaat, 
+            'nama' : nama, 
+            'no_telp' : no_telp, 
+            'email' : email, 
+            'gender' : gender, 
+            'hobi' : hobi, 
+            'sekolah' : sekolah, 
+            'temp_lahir' : temp_lahir, 
+            'tgl_lahir' : tgl_lahir, 
+            'no_telp_ortu' : no_telp_ortu, 
+            'kelas' : kelas, 
+            'daerah' : daerah, 
+            'kecamatan' : kecamatan, 
+            'alamat' : alamat, 
+            'foto' : foto,
+            'status' : status
+        }
+        list_absen.append(data)
+    return list_absen
+    
 
 # Test
 # print(get_all_jemaat())
