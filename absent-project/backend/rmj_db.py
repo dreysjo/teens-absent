@@ -8,19 +8,19 @@ from . import db
 from werkzeug.security import check_password_hash
 # from .main import app
 
-# app = Flask(__name__)
-# CORS(app, resources={r"*": {"origins": "*"}})
-# app.secret_key = "rmj_db"
+app = Flask(__name__)
+CORS(app, resources={r"*": {"origins": "*"}})
+app.secret_key = "rmj_db"
 # # userpass = 'mysql://root:@'
 # # basedir  = '127.0.0.1'
 # # dbname   = '/rmj_db'
 # # socket   = '?unix_socket=/Applications/XAMPP/xamppfiles/var/mysql/mysql.sock'
 # # dbname   = dbname + socket
 # # app.config['SQLALCHEMY_DATABASE_URI'] = userpass + basedir + dbname
-# app.config['SQLALCHEMY_DATABASE_URI']='mysql://root@localhost:3307/rmj_db'
+app.config['SQLALCHEMY_DATABASE_URI']='mysql://root@localhost:3306/rmj_db'
 # # app.config['SQLALCHEMY_DATABASE_URI']= 'mysql://jmspa:127.0.0.1/rmj_db'
-# app.config['SQLALCHEMY_TRACK_MODIFICATIONS']=False
-# db = SQLAlchemy(app)
+app.config['SQLALCHEMY_TRACK_MODIFICATIONS']=False
+db = SQLAlchemy(app)
 
 # class Jemaat(db.Model):
 #     id_jemaat = db.Column('id_jemaat',db.Integer,primary_key=True)
