@@ -1,9 +1,7 @@
 from flask import Flask, render_template,request,session,redirect,url_for,flash,send_from_directory, jsonify
-from rmj_db import *
-import socket
+from .rmj_db import *
 import os
-import random
-import string
+
 
 from flask_cors import CORS
 
