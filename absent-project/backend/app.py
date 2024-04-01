@@ -4,7 +4,6 @@ import os
 
 
 from flask_cors import CORS
-git 
 APP_ROOT = os.path.dirname(os.path.abspath(__file__))
 app.config['UPLOADED_PHOTOS_DEST'] = os.path.join(APP_ROOT, 'images')
 CORS(app)
